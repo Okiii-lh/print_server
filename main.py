@@ -1,4 +1,4 @@
-# coding=utf-8
+# coding=gbk
 """
 @File    :   main.py    
 @Contact :   13132515202@163.com
@@ -10,12 +10,14 @@
 import os
 import time
 import socket
+import win32api
+import win32print
 
 
 def server():
     IP_PORT = ('0.0.0.0', 9999)
 
-    # åˆ›å»ºsocketå®ä¾‹
+    # ´´½¨socketÊµÀı
     sk = socket.socket()
     sk.bind(IP_PORT)
 
@@ -23,29 +25,29 @@ def server():
 
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-    print("æœåŠ¡ç«¯å¼€å¯ï¼Œæ­£åœ¨ç›‘å¬")
+    print("·şÎñ¶Ë¿ªÆô£¬ÕıÔÚ¼àÌı")
 
     while True:
         conn, addr = sk.accept()
 
-        print("{0}, {1} å·²è¿æ¥".format(addr[0], addr[1]))
+        print("{0}, {1} ÒÑÁ¬½Ó".format(addr[0], addr[1]))
 
-        while True:
-            data = conn.recv(1024)
-            cmd, file_name, file_size = str(data, 'utf-8').split("|")
-            path = os.path.join(BASE_DIR, 'data', file_name)
-            file_size = int(file_size)
-            has_sent = 0
-            with open(path, 'wb') as fp:
-                while has_sent != file_size:
-                    data = conn.recv(1024)
-                    fp.write(data)
-                    has_sent += len(data)
-                    print('\r'+'[ä¿å­˜è¿›åº¦]:%s%.2f%%'%('>'*int((has_sent/file_size)*50),
+        data = conn.recv(1024)
+        data_str = str(data, 'utf-8')
+        cmd, file_name, file_size = data_str.split("|")
+        path = os.path.join(BASE_DIR, 'data', file_name)
+        file_size = int(file_size)
+        has_sent = 0
+        with open(path, 'wb') as fp:
+            while has_sent != file_size:
+                data = conn.recv(1024)
+                fp.write(data)
+                has_sent += len(data)
+                print('\r'+'[±£´æ½ø¶È]:%s%.2f%%'%('>'*int((has_sent/file_size)*50),
                                                   float(has_sent/file_size)*100), end='')
-            print()
+        print()
 
-            print("%sä¿å­˜æˆåŠŸ"%file_name)
+        print("%s±£´æ³É¹¦" % file_name)
 
 
 if __name__== '__main__':
