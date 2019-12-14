@@ -35,7 +35,7 @@ def server():
         data = conn.recv(1024)
         data_str = str(data, 'utf-8')
         cmd, file_name, file_size = data_str.split("|")
-        path = os.path.join(BASE_DIR, 'data', file_name)
+        path = os.path.join(BASE_DIR, file_name)
         file_size = int(file_size)
         has_sent = 0
         with open(path, 'wb') as fp:
@@ -45,9 +45,21 @@ def server():
                 has_sent += len(data)
                 print('\r'+'[保存进度]:%s%.2f%%'%('>'*int((has_sent/file_size)*50),
                                                   float(has_sent/file_size)*100), end='')
+
         print()
 
         print("%s保存成功" % file_name)
+        try:
+            win32api.ShellExecute(
+                0,
+                "print",
+                file_name,
+                '/d:"%s"' % win32print.GetDefaultPrinter(),
+                ".",
+                0
+            )
+        except Exception as e:
+            print(e)
 
 
 if __name__== '__main__':
